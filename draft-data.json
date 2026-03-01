@@ -1,0 +1,105 @@
+{
+  "picks": [],
+  "keepers": {
+    "TK": [
+      "Cal Raleigh",
+      "Pete Crow-Armstrong"
+    ],
+    "Rich": [
+      "Junior Caminero",
+      "Zachary Neto"
+    ],
+    "Furman": [
+      "Brice Turang",
+      "Jeremy Peña"
+    ],
+    "Cone": [
+      "Eugenio Suarez",
+      "James Wood"
+    ],
+    "Bubs": [
+      "TBD",
+      "TBD"
+    ],
+    "Vic": [
+      "Bryan Woo",
+      "TBD"
+    ],
+    "Quickster": [
+      "Max Fried",
+      "George Kirby"
+    ]
+  },
+  "rotoScores": {
+    "Furman": [
+      7,
+      7,
+      7,
+      7,
+      6,
+      6,
+      6,
+      6
+    ],
+    "Bubs": [
+      5,
+      4,
+      5,
+      4,
+      7,
+      7,
+      7,
+      7
+    ],
+    "Cone": [
+      3,
+      3,
+      4,
+      5,
+      4,
+      4,
+      4,
+      4
+    ],
+    "TK": [
+      6,
+      6,
+      6,
+      3,
+      2,
+      2,
+      2,
+      2
+    ],
+    "Quickster": [
+      2,
+      2,
+      2,
+      2,
+      5,
+      5,
+      5,
+      5
+    ],
+    "Rich": [
+      4,
+      5,
+      3,
+      3,
+      1,
+      1,
+      1,
+      1
+    ],
+    "Vic": [
+      1,
+      1,
+      1,
+      1,
+      3,
+      3,
+      3,
+      3
+    ]
+  }
+}
