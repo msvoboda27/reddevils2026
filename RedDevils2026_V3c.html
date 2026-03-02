@@ -613,17 +613,7 @@ body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;disp
 .modal-fp-val{font-size:17px;font-weight:800;color:var(--gold2);}
 
 /* CONFIRM */
-.confirm-overlay{position:fixed;inset:0;background:rgba(26,20,14,.6);z-index:2000;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(5px);}
-.confirm-overlay.hidden{display:none;}
-.confirm-box{background:var(--card2);border:2px solid var(--gold-b);border-radius:10px;padding:26px;width:380px;max-width:90vw;text-align:center;box-shadow:0 20px 48px rgba(0,0,0,.12);}
-.confirm-title{font-size:18px;font-weight:800;letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;}
-.confirm-msg{font-size:14px;color:var(--sub);margin-bottom:18px;line-height:1.6;}
-.confirm-player{color:var(--gold2);font-weight:700;}
-.confirm-owner{color:var(--blue);font-weight:700;}
-.confirm-btns{display:flex;gap:10px;justify-content:center;}
-.confirm-yes{background:var(--gold-b);color:#fff;border:none;padding:9px 28px;font-size:13px;font-weight:800;cursor:pointer;border-radius:5px;font-family:'Outfit',sans-serif;}
-.confirm-yes:hover{background:var(--gold2);}
-.confirm-no{background:transparent;color:var(--label);border:1.5px solid var(--border2);padding:9px 20px;font-size:13px;cursor:pointer;border-radius:5px;font-family:'Outfit',sans-serif;}
+/* confirm modal CSS — see Design 1 block below */
 .toast{position:fixed;bottom:64px;left:50%;transform:translateX(-50%);background:var(--green);color:#fff;
   padding:9px 22px;border-radius:5px;font-size:13px;font-weight:800;letter-spacing:1px;z-index:3000;
   opacity:0;transition:opacity .25s;pointer-events:none;}
@@ -661,31 +651,6 @@ body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;disp
 .modal-draft-btn:hover{background:var(--gold2);transform:translateY(-1px);}
 .modal-close-btn{background:transparent;border:2px solid var(--border);color:var(--text2);padding:14px 20px;font-size:14px;font-weight:700;border-radius:10px;cursor:pointer;font-family:'Outfit',sans-serif;}
 .modal-close-btn:hover{border-color:var(--text2);background:var(--surface);}
-
-/* ═══ CONFIRM MODAL — Design 2: Context Focus ═══ */
-.confirm-overlay{position:fixed;inset:0;background:rgba(26,20,14,.65);z-index:2000;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(6px);}
-.confirm-overlay.hidden{display:none;}
-.confirm-box{background:#fff;border-radius:18px;width:460px;max-width:92vw;overflow:hidden;box-shadow:0 20px 70px rgba(0,0,0,.28);border:2px solid var(--border);}
-.cm2-hdr{padding:24px 32px;background:var(--card2);border-bottom:2px solid var(--border);}
-.cm2-hdr-title{font-size:18px;font-weight:900;color:var(--text);text-align:center;letter-spacing:1px;text-transform:uppercase;}
-.cm2-body{padding:24px 32px;}
-.cm2-player{text-align:center;margin-bottom:20px;}
-.cm2-player-name{font-size:28px;font-weight:900;color:var(--gold-b);line-height:1;margin-bottom:6px;}
-.cm2-player-pos{font-size:13px;color:var(--sub);font-weight:600;}
-.cm2-pick-info{background:var(--surface);border-radius:10px;padding:14px;margin-bottom:16px;display:flex;justify-content:space-around;}
-.cm2-info-item{text-align:center;}
-.cm2-info-label{font-size:9px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--label);margin-bottom:5px;}
-.cm2-info-value{font-size:20px;font-weight:900;color:var(--text);}
-.cm2-team-fit{background:var(--blue-dim);border:1.5px solid var(--blue);border-radius:10px;padding:14px 16px;margin-bottom:20px;}
-.cm2-fit-title{font-size:10px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--blue);margin-bottom:8px;}
-.cm2-fit-content{font-size:12px;color:var(--text2);line-height:1.6;}
-.cm2-fit-highlight{color:var(--blue);font-weight:800;}
-.cm2-actions{display:flex;gap:10px;}
-.cm2-btn{flex:1;padding:14px;font-size:14px;font-weight:800;border-radius:10px;cursor:pointer;transition:all .15s;font-family:'Outfit',sans-serif;}
-.cm2-btn-confirm{background:var(--gold-b);color:#fff;border:none;}
-.cm2-btn-confirm:hover{background:var(--gold2);transform:translateY(-1px);}
-.cm2-btn-cancel{background:transparent;border:2px solid var(--border);color:var(--text2);}
-.cm2-btn-cancel:hover{border-color:var(--text);background:var(--surface);}
 
 
 /* ═══ CONFIRM MODAL — Design 1: Draft Announcement ═══ */
