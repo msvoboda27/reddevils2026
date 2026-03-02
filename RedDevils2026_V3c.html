@@ -1712,7 +1712,7 @@ function submitPick(){
   // Populate Design 2 confirm modal
   const setText2=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};
   setText2('cm2-player-name', playerName);
-  setText2('cm2-player-pos', p ? `${p.pos} · ${p.team}` : pos);
+  setText2('cm2-player-pos', player ? `${player.pos} · ${player.team}` : pos);
   setText2('cm2-pick-num', overall);
   setText2('cm2-round', round);
   setText2('cm2-owner', owner);
@@ -1725,10 +1725,10 @@ function submitPick(){
   const spFilled=spSlot?spSlot.assigned.length:0;
   const nxtPick=getNextYourPick();
   const picksAway=nxtPick?nxtPick.overall-overall:0;
-  const isPit=p&&(pos.startsWith('SP')||pos.startsWith('RP'));
+  const isPit=player&&(pos.startsWith('SP')||pos.startsWith('RP'));
   let fitTxt='';
   if(isPit&&pos.startsWith('SP')) fitTxt=`<span class="cm2-fit-highlight">${owner}'s rotation: ${spFilled}→${spFilled+1}/6 SP</span> filled after this pick.`;
-  else if(p&&p.hr) fitTxt=`Adds projected <span class="cm2-fit-highlight">${p.hr?.toFixed(0)} HR</span> and <span class="cm2-fit-highlight">${p.rbi?.toFixed(0)} RBI</span> to ${owner}'s lineup.`;
+  else if(player&&player.hr) fitTxt=`Adds projected <span class="cm2-fit-highlight">${player.hr?.toFixed(0)} HR</span> and <span class="cm2-fit-highlight">${player.rbi?.toFixed(0)} RBI</span> to ${owner}'s lineup.`;
   else fitTxt=`Adding ${playerName} (${pos}) to ${owner}'s roster.`;
   if(owner===YOU&&picksAway>0) fitTxt+=` Your next pick in <span class="cm2-fit-highlight">${picksAway} selections</span>.`;
   const fitEl=document.getElementById('cm2-fit-content');
