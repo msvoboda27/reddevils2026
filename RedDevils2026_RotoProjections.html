@@ -1,0 +1,1126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RedDevils 2026 — Projected Roto Standings</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root {
+  --bg: #0d0d12;
+  --surface: #13131c;
+  --card: #1a1a27;
+  --border: #2a2a3f;
+  --purple: #7c5cfc;
+  --purple-soft: #a88bfd;
+  --gold: #f5c842;
+  --gold-soft: #f5d87a;
+  --red: #e53e3e;
+  --green: #38c96a;
+  --cyan: #00d4ff;
+  --text: #e8e8f0;
+  --muted: #8888aa;
+  --rank1: #f5c842;
+  --rank2: #a0aec0;
+  --rank3: #cd7f32;
+  --rank-bot: #e53e3e;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── HEADER ── */
+.header {
+  background: linear-gradient(135deg, #0d0d12 0%, #1a0a2e 50%, #0d0d12 100%);
+  border-bottom: 1px solid var(--border);
+  padding: 48px 40px 36px;
+  position: relative;
+  overflow: hidden;
+}
+.header::before {
+  content: '';
+  position: absolute;
+  top: -60px; right: -80px;
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, rgba(124,92,252,0.18) 0%, transparent 70%);
+  pointer-events: none;
+}
+.header::after {
+  content: '';
+  position: absolute;
+  bottom: -40px; left: 100px;
+  width: 300px; height: 300px;
+  background: radial-gradient(circle, rgba(245,200,66,0.10) 0%, transparent 70%);
+  pointer-events: none;
+}
+.header-inner {
+  max-width: 1300px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+.league-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(124,92,252,0.15);
+  border: 1px solid rgba(124,92,252,0.35);
+  border-radius: 20px;
+  padding: 4px 14px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--purple-soft);
+  margin-bottom: 16px;
+}
+.dot { width: 6px; height: 6px; background: var(--purple); border-radius: 50%; animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+h1.page-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(42px, 6vw, 72px);
+  letter-spacing: 0.04em;
+  line-height: 1;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+h1.page-title span { color: var(--gold); }
+.header-sub {
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 400;
+  margin-bottom: 28px;
+}
+.header-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.pill {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 6px 14px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.pill strong { color: var(--text); }
+
+/* ── MAIN LAYOUT ── */
+.main {
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 40px;
+}
+
+/* ── SECTION LABELS ── */
+.section-header {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  margin-bottom: 24px;
+  margin-top: 48px;
+}
+.section-header:first-of-type { margin-top: 0; }
+.section-label {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 28px;
+  letter-spacing: 0.06em;
+  color: var(--text);
+}
+.section-line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(to right, var(--border), transparent);
+}
+.section-note {
+  font-size: 12px;
+  color: var(--muted);
+  font-style: italic;
+}
+
+/* ── ROTO SUMMARY TABLE ── */
+.roto-table-wrap {
+  overflow-x: auto;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  margin-bottom: 40px;
+}
+table.roto {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+table.roto thead tr {
+  background: #1e1e2e;
+}
+table.roto th {
+  padding: 12px 16px;
+  text-align: center;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+table.roto th:first-child { text-align: left; min-width: 160px; }
+table.roto th.cat-hit { color: var(--cyan); }
+table.roto th.cat-pit { color: var(--gold); }
+table.roto th.total { color: var(--purple-soft); }
+table.roto tbody tr {
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  transition: background 0.15s;
+}
+table.roto tbody tr:last-child { border-bottom: none; }
+table.roto tbody tr:hover { background: rgba(255,255,255,0.03); }
+table.roto td {
+  padding: 14px 16px;
+  text-align: center;
+  font-family: 'DM Mono', monospace;
+  font-size: 13px;
+}
+table.roto td:first-child {
+  text-align: left;
+  font-family: 'DM Sans', sans-serif;
+}
+.owner-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.owner-name {
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--text);
+}
+.team-name-sm {
+  font-size: 11px;
+  color: var(--muted);
+  font-weight: 400;
+}
+.rank-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px; height: 26px;
+  border-radius: 6px;
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  font-weight: 500;
+  margin: 0 auto;
+}
+.r1 { background: rgba(245,200,66,0.20); color: var(--gold); border: 1px solid rgba(245,200,66,0.4); }
+.r2 { background: rgba(160,174,192,0.15); color: #a0aec0; border: 1px solid rgba(160,174,192,0.3); }
+.r3 { background: rgba(205,127,50,0.15); color: #cd7f32; border: 1px solid rgba(205,127,50,0.3); }
+.r4 { background: rgba(255,255,255,0.05); color: var(--muted); border: 1px solid var(--border); }
+.r5 { background: rgba(255,255,255,0.04); color: var(--muted); border: 1px solid var(--border); }
+.r6 { background: rgba(229,62,62,0.08); color: #fc8181; border: 1px solid rgba(229,62,62,0.2); }
+.r7 { background: rgba(229,62,62,0.18); color: var(--red); border: 1px solid rgba(229,62,62,0.35); }
+
+.total-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 12px;
+  border-radius: 8px;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 20px;
+  letter-spacing: 0.05em;
+}
+.total-gold { background: rgba(245,200,66,0.18); color: var(--gold); border: 1px solid rgba(245,200,66,0.4); }
+.total-silver { background: rgba(160,174,192,0.12); color: #c0c8d8; border: 1px solid rgba(160,174,192,0.25); }
+.total-bronze { background: rgba(205,127,50,0.12); color: #cd9f52; border: 1px solid rgba(205,127,50,0.25); }
+.total-mid { background: rgba(255,255,255,0.05); color: var(--muted); border: 1px solid var(--border); }
+.total-low { background: rgba(229,62,62,0.10); color: #fc8181; border: 1px solid rgba(229,62,62,0.25); }
+
+/* ── CATEGORY BARS ── */
+.cat-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 40px;
+}
+@media(max-width:900px){ .cat-grid { grid-template-columns: repeat(2,1fr); } }
+@media(max-width:500px){ .cat-grid { grid-template-columns: 1fr; } }
+
+.cat-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+}
+.cat-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+}
+.cat-card.hit::before { background: linear-gradient(to right, var(--cyan), #0080ff); }
+.cat-card.pit::before { background: linear-gradient(to right, var(--gold), #ff9f00); }
+
+.cat-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 20px;
+  letter-spacing: 0.08em;
+  margin-bottom: 4px;
+}
+.cat-card.hit .cat-title { color: var(--cyan); }
+.cat-card.pit .cat-title { color: var(--gold); }
+.cat-subtitle {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+  margin-bottom: 16px;
+}
+.bar-list { display: flex; flex-direction: column; gap: 8px; }
+.bar-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.bar-owner {
+  width: 70px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: right;
+}
+.bar-track {
+  flex: 1;
+  height: 22px;
+  background: rgba(255,255,255,0.04);
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+}
+.bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  padding-left: 8px;
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  font-weight: 500;
+  color: rgba(0,0,0,0.75);
+  transition: width 1s cubic-bezier(0.4,0,0.2,1);
+  white-space: nowrap;
+  min-width: 40px;
+}
+.bar-rank {
+  width: 18px;
+  font-size: 11px;
+  font-family: 'DM Mono', monospace;
+  text-align: center;
+}
+.rank-1-bar { color: var(--gold); font-weight: 700; }
+.rank-2-bar { color: #a0aec0; }
+.rank-3-bar { color: #cd7f32; }
+.rank-bot-bar { color: var(--red); }
+.rank-mid-bar { color: var(--muted); }
+
+/* hitting bar colors */
+.hit-bar-1 { background: linear-gradient(to right, #00d4ff, #0090ff); }
+.hit-bar-2 { background: linear-gradient(to right, #00bce0, #0080dd); }
+.hit-bar-3 { background: linear-gradient(to right, #009dc0, #0070bb); }
+.hit-bar-4 { background: linear-gradient(to right, #007fa0, #005599); }
+.hit-bar-5 { background: linear-gradient(to right, #005f80, #004477); }
+.hit-bar-6 { background: linear-gradient(to right, #004060, #003366); }
+.hit-bar-7 { background: linear-gradient(to right, #002040, #001a44); }
+
+/* pitching bar colors */
+.pit-bar-1 { background: linear-gradient(to right, #f5c842, #ffaa00); }
+.pit-bar-2 { background: linear-gradient(to right, #dcb038, #e09a00); }
+.pit-bar-3 { background: linear-gradient(to right, #c09830, #c08800); }
+.pit-bar-4 { background: linear-gradient(to right, #a07828, #a07000); }
+.pit-bar-5 { background: linear-gradient(to right, #806020, #806000); }
+.pit-bar-6 { background: linear-gradient(to right, #604818, #604800); }
+.pit-bar-7 { background: linear-gradient(to right, #402810, #402800); }
+
+/* ── TEAM CARDS ── */
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 20px;
+  margin-bottom: 48px;
+}
+.team-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+  position: relative;
+}
+.team-card.top1 { border-color: rgba(245,200,66,0.5); }
+.team-card.top2 { border-color: rgba(160,174,192,0.4); }
+.team-card.top3 { border-color: rgba(205,127,50,0.4); }
+
+.team-card-header {
+  padding: 18px 20px 14px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+.team-rank-badge {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 36px;
+  letter-spacing: 0.03em;
+  line-height: 1;
+  opacity: 0.15;
+  position: absolute;
+  top: 12px; right: 16px;
+}
+.team-owner-big {
+  font-weight: 700;
+  font-size: 17px;
+  color: var(--text);
+  line-height: 1.2;
+}
+.team-name-tag {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+.team-total-big {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 38px;
+  letter-spacing: 0.03em;
+  line-height: 1;
+}
+.top1 .team-total-big { color: var(--gold); }
+.top2 .team-total-big { color: #c0c8d8; }
+.top3 .team-total-big { color: #cd9f52; }
+.team-card:not(.top1):not(.top2):not(.top3) .team-total-big { color: var(--muted); }
+.pts-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); text-align: right; }
+
+.team-cats {
+  padding: 14px 20px 18px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+.team-cat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.team-cat-label {
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+}
+.team-cat-score {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 26px;
+  line-height: 1;
+}
+.score-1 { color: var(--gold); }
+.score-2 { color: #a0aec0; }
+.score-3 { color: #cd7f32; }
+.score-4, .score-5 { color: var(--muted); }
+.score-6 { color: #fc8181; }
+.score-7 { color: var(--red); }
+.team-cat-stat {
+  font-size: 10px;
+  color: var(--muted);
+  font-family: 'DM Mono', monospace;
+}
+.cat-divider {
+  grid-column: 1 / -1;
+  height: 1px;
+  background: var(--border);
+  margin: 2px 0;
+}
+
+/* ── STRENGTHS ── */
+.team-strengths {
+  padding: 0 20px 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.strength-tag {
+  font-size: 10px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.str-hit { background: rgba(0,212,255,0.12); color: var(--cyan); border: 1px solid rgba(0,212,255,0.25); }
+.str-pit { background: rgba(245,200,66,0.12); color: var(--gold); border: 1px solid rgba(245,200,66,0.25); }
+.str-bal { background: rgba(56,201,106,0.12); color: var(--green); border: 1px solid rgba(56,201,106,0.25); }
+.str-warn { background: rgba(229,62,62,0.10); color: #fc8181; border: 1px solid rgba(229,62,62,0.2); }
+
+/* ── CHART SECTION ── */
+.chart-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 48px;
+}
+@media(max-width:800px){ .chart-grid { grid-template-columns: 1fr; } }
+.chart-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 24px;
+}
+.chart-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 20px;
+  letter-spacing: 0.06em;
+  margin-bottom: 4px;
+}
+.chart-title.hit { color: var(--cyan); }
+.chart-title.pit { color: var(--gold); }
+.chart-sub { font-size: 11px; color: var(--muted); margin-bottom: 20px; }
+.chart-wrap { position: relative; height: 280px; }
+
+/* ── FOOTER ── */
+.page-footer {
+  border-top: 1px solid var(--border);
+  padding: 24px 40px;
+  max-width: 1300px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.footer-left { font-size: 12px; color: var(--muted); }
+.footer-left strong { color: var(--text); }
+.footer-note { font-size: 11px; color: var(--muted); font-style: italic; }
+.champ-note {
+  background: rgba(245,200,66,0.1);
+  border: 1px solid rgba(245,200,66,0.3);
+  border-radius: 8px;
+  padding: 12px 20px;
+  font-size: 13px;
+  color: var(--gold-soft);
+  margin-bottom: 32px;
+  line-height: 1.5;
+}
+.champ-note strong { color: var(--gold); }
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(16px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+.team-card, .cat-card, .chart-card {
+  animation: fadeUp 0.5s ease both;
+}
+.team-card:nth-child(1){ animation-delay:0.05s }
+.team-card:nth-child(2){ animation-delay:0.10s }
+.team-card:nth-child(3){ animation-delay:0.15s }
+.team-card:nth-child(4){ animation-delay:0.20s }
+.team-card:nth-child(5){ animation-delay:0.25s }
+.team-card:nth-child(6){ animation-delay:0.30s }
+.team-card:nth-child(7){ animation-delay:0.35s }
+</style>
+</head>
+<body>
+
+<!-- CROSS-NAV -->
+<style>
+  .cross-nav {
+    background: #0f0f1a;
+    padding: 10px 40px;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    border-bottom: 2px solid #9966ff;
+  }
+  .cross-nav a {
+    color: #b388ff;
+    text-decoration: none;
+    font-family: 'Outfit', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 6px 18px;
+    border: 1px solid rgba(153,102,255,0.3);
+    border-radius: 4px;
+    transition: background 0.2s;
+  }
+  .cross-nav a:hover { background: rgba(153,102,255,0.15); }
+  .cross-nav a.active { background: rgba(153,102,255,0.2); border-color: #b388ff; }
+</style>
+<div class="cross-nav">
+  <a href="RedDevils2026_DraftRecap.html">📰 Draft Recap</a>
+  <a href="RedDevils2026_RotoProjections.html" class="active">📊 Roto Projections</a>
+</div>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-inner">
+    <div class="league-badge"><div class="dot"></div>RedDevils Fantasy Baseball · Season 40</div>
+    <h1 class="page-title">2026 Projected<br><span>Roto Standings</span></h1>
+    <p class="header-sub">Steamer-based projections · 8-category rotisserie · 7 teams · Rank 1–7 per category (7 = best)</p>
+    <div class="header-pills">
+      <div class="pill">Hitting: <strong>BA · HR · RBI · SB · R</strong></div>
+      <div class="pill">Pitching: <strong>W · ERA · WHIP · SV</strong></div>
+      <div class="pill">Max Points: <strong>56</strong></div>
+      <div class="pill">Defending Champion: <strong>🏆 Rich (Filthy Rich Boiler)</strong></div>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+
+<!-- CHAMP NOTE -->
+<div class="champ-note">
+  📊 <strong>Projection note:</strong> These roto scores reflect projected season totals based on each team's drafted roster and Steamer 2026 projections. Categories ranked 1–7 within the league (7 = best, 1 = worst). ERA and WHIP are inverted — lower is better, so the team with the best ERA earns a 7. Saves reflect Quickster's "punt saves" strategy and heavy RP investment by Rich, Cone, and Furman. Runs (R) added as a bonus 9th-category view.
+</div>
+
+<!-- OVERALL ROTO TABLE -->
+<div class="section-header">
+  <div class="section-label">Overall Roto Standings</div>
+  <div class="section-line"></div>
+  <div class="section-note">Projected points out of 56 max</div>
+</div>
+
+<div class="roto-table-wrap">
+<table class="roto">
+  <thead>
+    <tr>
+      <th style="text-align:left">Team</th>
+      <th class="cat-hit">BA</th>
+      <th class="cat-hit">HR</th>
+      <th class="cat-hit">RBI</th>
+      <th class="cat-hit">SB</th>
+      <th class="cat-hit">R</th>
+      <th class="cat-pit">W</th>
+      <th class="cat-pit">ERA</th>
+      <th class="cat-pit">WHIP</th>
+      <th class="cat-pit">SV</th>
+      <th class="total">TOTAL</th>
+      <th class="total">RANK</th>
+    </tr>
+  </thead>
+  <tbody id="rotoTableBody"></tbody>
+</table>
+</div>
+
+<!-- CATEGORY BARS -->
+<div class="section-header">
+  <div class="section-label">Category Breakdown</div>
+  <div class="section-line"></div>
+  <div class="section-note">Ranked within league, bars show relative dominance</div>
+</div>
+
+<div class="cat-grid" id="catGrid"></div>
+
+<!-- CHARTS -->
+<div class="section-header">
+  <div class="section-label">Visual Analysis</div>
+  <div class="section-line"></div>
+</div>
+<div class="chart-grid">
+  <div class="chart-card">
+    <div class="chart-title hit">Hitting Points</div>
+    <div class="chart-sub">BA + HR + RBI + SB combined roto score (max 28)</div>
+    <div class="chart-wrap"><canvas id="hitChart"></canvas></div>
+  </div>
+  <div class="chart-card">
+    <div class="chart-title pit">Pitching Points</div>
+    <div class="chart-sub">W + ERA + WHIP + SV combined roto score (max 28)</div>
+    <div class="chart-wrap"><canvas id="pitChart"></canvas></div>
+  </div>
+  <div class="chart-card">
+    <div class="chart-title" style="color:var(--purple-soft)">Overall Roto Radar</div>
+    <div class="chart-sub">Total points by team — projected season-end standings</div>
+    <div class="chart-wrap"><canvas id="totalChart"></canvas></div>
+  </div>
+  <div class="chart-card">
+    <div class="chart-title" style="color:var(--green)">Category Heatmap</div>
+    <div class="chart-sub">Where each team wins and loses (7=elite, 1=cellar)</div>
+    <div class="chart-wrap"><canvas id="radarChart"></canvas></div>
+  </div>
+</div>
+
+<!-- TEAM CARDS -->
+<div class="section-header">
+  <div class="section-label">Team-by-Team Breakdown</div>
+  <div class="section-line"></div>
+</div>
+<div class="team-grid" id="teamGrid"></div>
+
+</div><!-- /main -->
+
+<div class="page-footer">
+  <div class="footer-left">
+    <strong>RedDevils 2026</strong> · 40th Season · Lowell, Indiana<br>
+    Generated post-draft · March 15, 2026
+  </div>
+  <div class="footer-note">Projections based on Steamer 2026 · Rankings subject to injury, trades & spring surprises · Furman still hasn't won.</div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════
+// DATA — 2026 DRAFTED ROSTERS + PROJECTIONS
+// Based on actual draft picks + Steamer 2026
+// ══════════════════════════════════════════════════
+
+const TEAMS = [
+  {
+    owner: 'Furman',
+    teamName: 'LOVE, HURTS',
+    champs: [],
+    color: '#e05252',
+    // Key hitters: Ohtani (bat), Mookie Betts, Henderson, Tatis, Machado, Olson, Altuve, O.Cruz, Pena, Walker, B.Turang (K), J.Pena(K), B.Rice, Simpson
+    // Key pitchers: Glasnow, G.Rodriguez, Misiorowski, Rogers, T.Imai, G.Williams + Diaz, Duran, Hoffman
+    proj: { ba:.267, hr:198, rbi:715, sb:84, r:728, w:76, era:3.52, whip:1.19, sv:78 },
+    notes: ['Elite 1-2 hitter punch', 'Diaz+Duran saves juggernaut', 'No titles in 20+ years', 'Glasnow injury risk'],
+    tags: [{t:'str-hit','l':'Hitting Monster'},{t:'str-pit','l':'Saves Leader'},{t:'str-bal','l':'Balanced'},{t:'str-warn','l':'0 Titles 20yrs'}],
+  },
+  {
+    owner: 'Rich',
+    teamName: 'Filthy Rich Boiler 🏆',
+    champs: ['2025'],
+    color: '#f5c842',
+    // Acuna, Lindor, Devers, Trea Turner, R.Anthony, Merrill, Arozarena, Varsho, Langeliers, Neto, Caminero(K), Neto(K), Yandy, Sal Perez
+    // Skenes, deGrom, Bradish, Gausman, Joe Ryan, Woodruff + Helsley, Iglesias, Jansen
+    proj: { ba:.263, hr:193, rbi:700, sb:92, r:710, w:73, era:3.48, whip:1.18, sv:71 },
+    notes: ['Defending champion', 'Skenes + deGrom rotation elite', 'deGrom/Bradish injury risk', 'Helsley elite closer'],
+    tags: [{t:'str-hit','l':'Speed + Power'},{t:'str-pit','l':'Ace Rotation'},{t:'str-warn','l':'Injury Risk SP'}],
+  },
+  {
+    owner: 'Cone',
+    teamName: 'WAR',
+    champs: ['2023','2024'],
+    color: '#a88bfd',
+    // Witt, Julio, Vlad, J.Wood, Naylor, Yelich, Hoerner, M.Harris, W.Smith, Ward, Rafaela, Story, Suarez(K), A.Ramirez
+    // Gilbert, Strider, Cease, Peralta, C.Sanchez, Sonny Gray + Mason Miller, Munoz, Chapman
+    proj: { ba:.265, hr:196, rbi:695, sb:88, r:720, w:74, era:3.55, whip:1.21, sv:82 },
+    notes: ['Back-to-back champion', 'Mason Miller elite closer', 'Witt + Julio elite core', 'Strider health question'],
+    tags: [{t:'str-hit','l':'Elite Core'},{t:'str-pit','l':'Closer Loaded'},{t:'str-bal','l':'Back-to-Back'},{t:'str-warn','l':'Strider Risk'}],
+  },
+  {
+    owner: 'Vic',
+    teamName: 'FAFO',
+    champs: ['2017','2018'],
+    color: '#38c96a',
+    // Soto, E.DeLaCruz, Chisholm, Alonso, Bellinger, Riley Greene, Rooker, Seiya, L.Butler, H.Goodman, Aranda, Montgomery, Griffin(K), Woo(K)
+    // Ohtani(P), Sale, Framber, Blake Snell, Schlittler, Woo + Hader, D.Williams, Pagan
+    proj: { ba:.260, hr:202, rbi:720, sb:95, r:715, w:70, era:3.62, whip:1.23, sv:68 },
+    notes: ['Juan Soto + Elly elite duo', 'Ohtani pitching ace', 'Josh Hader elite closer', 'Sale/Snell age concerns'],
+    tags: [{t:'str-hit','l':'Power + Speed'},{t:'str-pit','l':'Ohtani Ace'},{t:'str-warn','l':'SP Durability'}],
+  },
+  {
+    owner: 'Quickster',
+    teamName: 'Unleashed Claude Projectors',
+    champs: ['2020','2021'],
+    color: '#00d4ff',
+    // Skubal(R1), Tucker, Yordan, Harper, Schwarber, Seager, Langford, Duran, Hernandez, Riley, Abrams, W.Contreras, M.Garcia, X.Edwards, Carpenter
+    // Fried(K), Kirby(K), Eovaldi, Pepiot, Yesavage + RPs (punt saves)
+    proj: { ba:.262, hr:190, rbi:690, sb:80, r:700, w:71, era:3.58, whip:1.22, sv:28 },
+    notes: ['Skubal + Fried + Kirby elite', 'Tucker + Yordan hitting core', 'Punt saves strategy', 'Claude did not fail*'],
+    tags: [{t:'str-hit','l':'Deep Hitting'},{t:'str-pit','l':'Elite SP Trio'},{t:'str-warn','l':'Punt Saves'},{t:'str-warn','l':'*Soto slipped'}],
+  },
+  {
+    owner: 'Bubs',
+    teamName: 'Another $100 Donation',
+    champs: ['2019'],
+    color: '#ff9f00',
+    // Judge, Carroll, Crow-Armstrong, Springer, Albies, Perdomo, Pasquantino, Westburg, Swanson, Stowers, Nimmo, Pages, Baldwin, W.Contreras
+    // Yamamoto, Wheeler, H.Brown, Logan Webb, Pivetta, McLean + RPs
+    proj: { ba:.258, hr:185, rbi:668, sb:76, r:688, w:68, era:3.70, whip:1.24, sv:38 },
+    notes: ['Aaron Judge anchor', 'Wheeler 8-min pick drama', 'Yamamoto ace rotation', 'Westburg 6-min pick!'],
+    tags: [{t:'str-hit','l':'Judge-Powered'},{t:'str-pit','l':'Solid Rotation'},{t:'str-warn','l':'Slow Drafter'}],
+  },
+  {
+    owner: 'TK',
+    teamName: 'Cool Breez to a Win!',
+    champs: ['2022','2016','2015','2005'],
+    color: '#fc8181',
+    // J.Ramirez, Freeman, K.Marte, Chourio, Buxton, Bichette, Adames, Kurtz, Adell, L.Robert, Marsee, Busch, Caballero, Cal Raleigh(K), Crow-Armstrong(K)
+    // Crochet, Ragans, Luzardo, E.Perez, Lodolo, Sheehan + RPs
+    proj: { ba:.256, hr:180, rbi:660, sb:82, r:680, w:66, era:3.75, whip:1.26, sv:34 },
+    notes: ['Jose Ramirez anchor', 'Crochet ace of staff', 'Buxton injury concerns always', 'Cool Breez never dies'],
+    tags: [{t:'str-hit','l':'Ramirez Core'},{t:'str-pit','l':'Crochet Ace'},{t:'str-warn','l':'Buxton Risk'},{t:'str-warn','l':'SP Depth Thin'}],
+  },
+];
+
+// ══════════════════════════════════════════════════
+// ROTO RANKING ENGINE
+// ══════════════════════════════════════════════════
+
+function rankCategory(teams, key, higherIsBetter = true) {
+  const vals = teams.map(t => ({ owner: t.owner, val: t.proj[key] }));
+  vals.sort((a, b) => higherIsBetter ? b.val - a.val : a.val - b.val);
+  const rankMap = {};
+  vals.forEach((v, i) => { rankMap[v.owner] = 7 - i; }); // rank 7=best, 1=worst
+  return rankMap;
+}
+
+const cats = ['ba','hr','rbi','sb','r','w','era','whip','sv'];
+const catHigher = { ba:true, hr:true, rbi:true, sb:true, r:true, w:true, era:false, whip:false, sv:true };
+const catLabels = { ba:'BA', hr:'HR', rbi:'RBI', sb:'SB', r:'R', w:'W', era:'ERA', whip:'WHIP', sv:'SV' };
+const catTypes  = { ba:'hit', hr:'hit', rbi:'hit', sb:'hit', r:'hit', w:'pit', era:'pit', whip:'pit', sv:'pit' };
+
+const rankMaps = {};
+cats.forEach(cat => {
+  rankMaps[cat] = rankCategory(TEAMS, cat, catHigher[cat]);
+});
+
+// Compute totals (BA, HR, RBI, SB, W, ERA, WHIP, SV — 8 scoring cats, R is bonus)
+const scoringCats = ['ba','hr','rbi','sb','w','era','whip','sv'];
+
+TEAMS.forEach(t => {
+  t.ranks = {};
+  cats.forEach(cat => { t.ranks[cat] = rankMaps[cat][t.owner]; });
+  t.total = scoringCats.reduce((sum, cat) => sum + t.ranks[cat], 0);
+  t.hitTotal = ['ba','hr','rbi','sb'].reduce((s,c) => s + t.ranks[c], 0);
+  t.pitTotal = ['w','era','whip','sv'].reduce((s,c) => s + t.ranks[c], 0);
+});
+
+// Sort by total desc
+TEAMS.sort((a, b) => b.total - a.total);
+
+// ══════════════════════════════════════════════════
+// RENDER — ROTO TABLE
+// ══════════════════════════════════════════════════
+
+function rankClass(r) {
+  return { 7:'r1', 6:'r2', 5:'r3', 4:'r4', 3:'r5', 2:'r6', 1:'r7' }[r] || 'r4';
+}
+function totalClass(t) {
+  if (t >= 42) return 'total-gold';
+  if (t >= 36) return 'total-silver';
+  if (t >= 30) return 'total-bronze';
+  if (t >= 24) return 'total-mid';
+  return 'total-low';
+}
+
+const tableBody = document.getElementById('rotoTableBody');
+TEAMS.forEach((t, i) => {
+  const tr = document.createElement('tr');
+  const displayCats = ['ba','hr','rbi','sb','r','w','era','whip','sv'];
+  const catCells = displayCats.map(cat => {
+    const r = t.ranks[cat];
+    const rc = rankClass(r);
+    return `<td><div class="rank-chip ${rc}">${r}</div></td>`;
+  }).join('');
+  const medal = ['🥇','🥈','🥉','','','',''][i] || '';
+  const tc = totalClass(t.total);
+  tr.innerHTML = `
+    <td>
+      <div class="owner-cell">
+        <div class="owner-name">${medal} ${t.owner}</div>
+        <div class="team-name-sm">${t.teamName}</div>
+      </div>
+    </td>
+    ${catCells}
+    <td><div class="total-chip ${tc}">${t.total}</div></td>
+    <td><div class="rank-chip ${rankClass(8-i)}">${i+1}</div></td>
+  `;
+  tableBody.appendChild(tr);
+});
+
+// ══════════════════════════════════════════════════
+// RENDER — CATEGORY BAR CARDS
+// ══════════════════════════════════════════════════
+
+const catDisplayOrder = ['ba','hr','rbi','sb','w','era','whip','sv'];
+const catFullName = {
+  ba:'Batting Average', hr:'Home Runs', rbi:'RBI', sb:'Stolen Bases',
+  w:'Wins', era:'ERA (lower=better)', whip:'WHIP (lower=better)', sv:'Saves'
+};
+const catGrid = document.getElementById('catGrid');
+
+catDisplayOrder.forEach(cat => {
+  const type = catTypes[cat];
+  // Sort teams by this category value
+  const sorted = [...TEAMS].sort((a, b) =>
+    catHigher[cat] ? b.proj[cat] - a.proj[cat] : a.proj[cat] - b.proj[cat]
+  );
+  const maxVal = Math.max(...sorted.map(t => t.proj[cat]));
+  const minVal = Math.min(...sorted.map(t => t.proj[cat]));
+  const range  = maxVal - minVal || 1;
+
+  const card = document.createElement('div');
+  card.className = `cat-card ${type}`;
+  card.innerHTML = `
+    <div class="cat-title">${catLabels[cat]}</div>
+    <div class="cat-subtitle">${catFullName[cat]}</div>
+    <div class="bar-list">${
+      sorted.map((t, i) => {
+        const rank = 7 - i;
+        const pct = ((t.proj[cat] - minVal) / range * 70 + 30);
+        const barClass = type === 'hit' ? `hit-bar-${i+1}` : `pit-bar-${i+1}`;
+        const rankCls = i===0?'rank-1-bar':i===1?'rank-2-bar':i===2?'rank-3-bar':i>=5?'rank-bot-bar':'rank-mid-bar';
+        let valDisplay;
+        if (cat === 'ba') valDisplay = t.proj[cat].toFixed(3);
+        else if (cat === 'era') valDisplay = t.proj[cat].toFixed(2);
+        else if (cat === 'whip') valDisplay = t.proj[cat].toFixed(2);
+        else valDisplay = Math.round(t.proj[cat]);
+        return `
+          <div class="bar-row">
+            <div class="bar-owner">${t.owner}</div>
+            <div class="bar-track">
+              <div class="bar-fill ${barClass}" style="width:${pct}%">${valDisplay}</div>
+            </div>
+            <div class="bar-rank ${rankCls}">${rank}</div>
+          </div>`;
+      }).join('')
+    }</div>`;
+  catGrid.appendChild(card);
+});
+
+// ══════════════════════════════════════════════════
+// RENDER — TEAM CARDS
+// ══════════════════════════════════════════════════
+
+const teamGrid = document.getElementById('teamGrid');
+const scoreDisplayCats = ['ba','hr','rbi','sb','w','era','whip','sv'];
+const catStatFormat = {
+  ba: v => v.toFixed(3),
+  hr: v => Math.round(v),
+  rbi: v => Math.round(v),
+  sb: v => Math.round(v),
+  w: v => Math.round(v),
+  era: v => v.toFixed(2),
+  whip: v => v.toFixed(2),
+  sv: v => Math.round(v),
+};
+
+TEAMS.forEach((t, i) => {
+  const card = document.createElement('div');
+  const topCls = i===0?'top1':i===1?'top2':i===2?'top3':'';
+  card.className = `team-card ${topCls}`;
+
+  const hitCats = scoreDisplayCats.slice(0,4);
+  const pitCats = scoreDisplayCats.slice(4);
+
+  const catHtml = (arr) => arr.map(cat => {
+    const r = t.ranks[cat];
+    const sc = `score-${r}`;
+    return `<div class="team-cat">
+      <div class="team-cat-label">${catLabels[cat]}</div>
+      <div class="team-cat-score ${sc}">${r}</div>
+      <div class="team-cat-stat">${catStatFormat[cat](t.proj[cat])}</div>
+    </div>`;
+  }).join('');
+
+  const tagsHtml = t.tags.map(tag =>
+    `<span class="strength-tag ${tag.t}">${tag.l}</span>`
+  ).join('');
+
+  const medal = ['🥇','🥈','🥉','','','',''][i] || '';
+  const champStr = t.champs.length ? `🏆 ${t.champs.join(', ')}` : 'No titles';
+
+  card.innerHTML = `
+    <div class="team-rank-badge">${i+1}</div>
+    <div class="team-card-header">
+      <div>
+        <div class="team-owner-big">${medal} ${t.owner}</div>
+        <div class="team-name-tag">${t.teamName}</div>
+        <div class="team-name-tag" style="margin-top:4px;color:#666">${champStr}</div>
+      </div>
+      <div style="text-align:right;flex-shrink:0">
+        <div class="team-total-big">${t.total}</div>
+        <div class="pts-label">pts / 56</div>
+      </div>
+    </div>
+    <div class="team-cats">
+      ${catHtml(hitCats)}
+      <div class="cat-divider"></div>
+      ${catHtml(pitCats)}
+    </div>
+    <div class="team-strengths">${tagsHtml}</div>
+  `;
+  teamGrid.appendChild(card);
+});
+
+// ══════════════════════════════════════════════════
+// CHARTS
+// ══════════════════════════════════════════════════
+
+const ownerLabels = TEAMS.map(t => t.owner);
+const ownerColors = TEAMS.map(t => t.color);
+const chartDefaults = {
+  plugins: {
+    legend: { display: false },
+    tooltip: {
+      backgroundColor: '#1e1e2e',
+      titleColor: '#e8e8f0',
+      bodyColor: '#8888aa',
+      borderColor: '#2a2a3f',
+      borderWidth: 1,
+    }
+  }
+};
+
+// Hitting chart
+new Chart(document.getElementById('hitChart'), {
+  type: 'bar',
+  data: {
+    labels: ownerLabels,
+    datasets: [{
+      data: TEAMS.map(t => t.hitTotal),
+      backgroundColor: ownerColors.map(c => c + '99'),
+      borderColor: ownerColors,
+      borderWidth: 2,
+      borderRadius: 6,
+    }]
+  },
+  options: {
+    ...chartDefaults,
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      x: { ticks: { color: '#8888aa', font:{size:11} }, grid: { color: '#2a2a3f' } },
+      y: { min:0, max:28, ticks: { color:'#8888aa', font:{size:11} }, grid: { color:'#2a2a3f' } }
+    },
+    plugins: { ...chartDefaults.plugins,
+      tooltip: { ...chartDefaults.plugins.tooltip,
+        callbacks: { label: ctx => `Hitting: ${ctx.raw} pts` }
+      }
+    }
+  }
+});
+
+// Pitching chart
+new Chart(document.getElementById('pitChart'), {
+  type: 'bar',
+  data: {
+    labels: ownerLabels,
+    datasets: [{
+      data: TEAMS.map(t => t.pitTotal),
+      backgroundColor: ownerColors.map(c => c + '99'),
+      borderColor: ownerColors,
+      borderWidth: 2,
+      borderRadius: 6,
+    }]
+  },
+  options: {
+    ...chartDefaults,
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      x: { ticks: { color:'#8888aa', font:{size:11} }, grid: { color:'#2a2a3f' } },
+      y: { min:0, max:28, ticks: { color:'#8888aa', font:{size:11} }, grid: { color:'#2a2a3f' } }
+    },
+    plugins: { ...chartDefaults.plugins,
+      tooltip: { ...chartDefaults.plugins.tooltip,
+        callbacks: { label: ctx => `Pitching: ${ctx.raw} pts` }
+      }
+    }
+  }
+});
+
+// Total doughnut
+new Chart(document.getElementById('totalChart'), {
+  type: 'bar',
+  data: {
+    labels: ownerLabels,
+    datasets: [
+      {
+        label: 'Hitting',
+        data: TEAMS.map(t => t.hitTotal),
+        backgroundColor: '#00d4ff55',
+        borderColor: '#00d4ff',
+        borderWidth: 2,
+        borderRadius: { topLeft:4, topRight:4 },
+      },
+      {
+        label: 'Pitching',
+        data: TEAMS.map(t => t.pitTotal),
+        backgroundColor: ownerColors.map(c => c + '88'),
+        borderColor: ownerColors,
+        borderWidth: 2,
+        borderRadius: { topLeft:4, topRight:4 },
+      }
+    ]
+  },
+  options: {
+    ...chartDefaults,
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      ...chartDefaults.plugins,
+      legend: {
+        display: true,
+        labels: { color: '#8888aa', font: {size:11}, boxWidth:12 }
+      }
+    },
+    scales: {
+      x: { stacked:true, ticks: { color:'#8888aa', font:{size:11} }, grid: { color:'#2a2a3f' } },
+      y: { stacked:true, min:0, max:56, ticks: { color:'#8888aa', font:{size:11} }, grid: { color:'#2a2a3f' } }
+    }
+  }
+});
+
+// Radar / heatmap-style spider
+const radarCats = ['BA','HR','RBI','SB','W','ERA','WHIP','SV'];
+const radarKeys  = ['ba','hr','rbi','sb','w','era','whip','sv'];
+const radarColors = ['#f5c842','#e05252','#a88bfd','#38c96a','#00d4ff','#ff9f00','#fc8181'];
+
+new Chart(document.getElementById('radarChart'), {
+  type: 'radar',
+  data: {
+    labels: radarCats,
+    datasets: TEAMS.map((t, i) => ({
+      label: t.owner,
+      data: radarKeys.map(k => t.ranks[k]),
+      backgroundColor: radarColors[i] + '22',
+      borderColor: radarColors[i],
+      borderWidth: 2,
+      pointBackgroundColor: radarColors[i],
+      pointRadius: 3,
+    }))
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        display: true,
+        labels: { color: '#8888aa', font:{size:10}, boxWidth:10, padding:8 }
+      },
+      tooltip: {
+        backgroundColor: '#1e1e2e',
+        titleColor: '#e8e8f0',
+        bodyColor: '#8888aa',
+        borderColor: '#2a2a3f',
+        borderWidth: 1,
+      }
+    },
+    scales: {
+      r: {
+        min: 0, max: 7,
+        ticks: { color:'#8888aa', font:{size:9}, stepSize:1 },
+        grid: { color:'#2a2a3f' },
+        pointLabels: { color:'#aaaacc', font:{size:11, weight:'600'} },
+        angleLines: { color:'#2a2a3f' }
+      }
+    }
+  }
+});
+</script>
+</body>
+</html>
